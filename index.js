@@ -9,6 +9,10 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 
+const env = {
+  TOKEN: "EAAHmpU2nlHQBAAXYXlRzYkIw3nUTC9DirH97fiAQ0SRi4fUfl5HkKT1uIXO10FcBX94vy5TikRGeVgAkZCFVqkGQMddDe3wTsZA0PaF8EW0Fx0bndC8SXD6SlB6CtsBfnnwY9Vr2jfiFrG1sdQwi4Xu4hjwV8MrxJLBRNyuAZDZD"
+}
+
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
@@ -28,9 +32,9 @@ app.post('/webhook', function (req, res) {
       pageEntry.messaging.forEach(function (messagingEvent) {
         if (messagingEvent.message) {
           if (messagingEvent.message.attachments) {
-            console.log(messagingEvent)
+            reciveAttachments(messagingEvent);
           } else {
-            receiveMessage(messagingEvent)
+            receiveMessage(messagingEvent);
           }
         } else if (messagingEvent.postback) {
           receiveMessageWelcome(messagingEvent)
@@ -102,13 +106,26 @@ const sendInformation = (recipientId) => {
   setTimeout(sendMsgInstructions, 3000, recipientId);
 };
 
+const reciveAttachments = (event) => {
+  const messageAttachments = event.message.attachments;
+  let lat = null;
+  let long = null;
+  if (messageAttachments[0].payload.coordinates) {
+   lat = messageAttachments[0].payload.coordinates.lat;
+   long = messageAttachments[0].payload.coordinates.long;
+  }
+  let msgLocation = "latitude es : " + lat + " , longitud es : " + long + "\n";
+  console.log(msgLocation);
+};
+
 const receiveMessage = (event) => {
   const recipientId = event.sender.id;
   const messageText = event.message.text;
   const quick_reply = event.message.quick_reply
+
   switch (event.message.text) {
     case 'Enviar Reporte':
-      console.log('Enviar Reporte')
+      userLocation(recipientId)
       break;
     case 'Información':
       sendInformation(recipientId);
@@ -117,6 +134,27 @@ const receiveMessage = (event) => {
       sendMsgInstructions(recipientId);
       break;
   };
+};
+
+const userLocation = (recipientId) => {
+  const msgWelcome = [
+    "¿Dime donde te encuentras?",
+    "¿Cual es tu ubicacion?",
+  ];
+  const instructions = msgWelcome[Math.floor(Math.random() * msgWelcome.length)];
+  const reply = {
+    "recipient": {
+      "id": recipientId
+    },
+    "message": {
+      "text": instructions,
+      "quick_replies": [{
+          "content_type": "location",
+        },
+      ]
+    }
+  }
+  sendToMessenger(reply);
 };
 
 const sendToMessenger = (messageData) => {
@@ -132,7 +170,7 @@ const sendToMessenger = (messageData) => {
           console.log("recurso enviado...");
       }
   });
-}
+};
 
 const allowCrossDomain = function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
