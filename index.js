@@ -6,11 +6,20 @@ const bodyParser = require('body-parser');
 const app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   res.send('Hello World!')
-})
+});
+
+
+app.get('/webhook', function (req, res) {
+  if (req.query['hub.verify_token'] === 'reportaBot_says_hello') {
+      res.send(req.query['hub.challenge']);
+  } else {
+      res.send('reportaBot_says_bye');
+  }
+});
 
 const allowCrossDomain = function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
