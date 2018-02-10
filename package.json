@@ -12,6 +12,16 @@
   },
   "author": "Oscar Barajas <oscar@dragons.mx>",
   "license": "MIT",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "body-parser": "^1.18.2",
+    "express": "^4.15.3",
+    "firebase-admin": "^5.4.3",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  },
   "bugs": {
     "url": "https://github.com/gndx/reportaBot/issues"
   },
