@@ -13,6 +13,10 @@ const env = {
   TOKEN: "EAAHmpU2nlHQBAAXYXlRzYkIw3nUTC9DirH97fiAQ0SRi4fUfl5HkKT1uIXO10FcBX94vy5TikRGeVgAkZCFVqkGQMddDe3wTsZA0PaF8EW0Fx0bndC8SXD6SlB6CtsBfnnwY9Vr2jfiFrG1sdQwi4Xu4hjwV8MrxJLBRNyuAZDZD"
 }
 
+const globalMessages = {
+  reportInfo: 'Gracias por preocuparte por tu ciudad para iniciar su reporte es necesario que nos proporciones el tipo de incidencia:'
+}
+
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
@@ -32,11 +36,14 @@ app.post('/webhook', function (req, res) {
       pageEntry.messaging.forEach(function (messagingEvent) {
         if (messagingEvent.message) {
           if (messagingEvent.message.attachments) {
+            console.log('attachment')
             reciveAttachments(messagingEvent);
           } else {
+            console.log('mensaje normal')
             receiveMessage(messagingEvent);
           }
         } else if (messagingEvent.postback) {
+          console.log('postback')
           receiveMessageWelcome(messagingEvent)
         }
       });
@@ -47,10 +54,24 @@ app.post('/webhook', function (req, res) {
 
 const receiveMessageWelcome = (event) => {
   const recipientId = event.sender.id;
-  sendMessangeWelcome(recipientId);
+  const postBackType = event.postback.payload;
+  const postBackTitle = event.postback.title;
+  switch (postBackType) {
+    case 'GET_STARTED_REPORTABOT':
+      sendMessangeWelcome(recipientId);
+      console.log(postBackTitle)
+      break;
+    case 'REPORT_ANIMAL': 
+    case 'REPORT_BUMP':
+    case 'REPORT_LUMINARY':
+    setTimeout(userLocation, 1000, recipientId)
+    default:
+      break;
+  }
+
 };
 
-const sendMessangeWelcome = async (recipientId) => {
+const sendMessangeWelcome = (recipientId) => {
   const messageData = {
     recipient: {
       id: recipientId
@@ -59,16 +80,14 @@ const sendMessangeWelcome = async (recipientId) => {
       text: '¡Hola! soy ReportaBot...\n Estoy para ayudarte 😎'
     }
   };
-  await sendToMessenger(messageData);
-  await sendMsgInstructions(recipientId);
+  sendToMessenger(messageData);
+  setTimeout(sendMsgInstructions, 1000, recipientId);
 };
 
 const sendMsgInstructions = (recipientId) => {
   const msgWelcome = [
-    "¿Quieres Reportar una Incidencia en tu ciudad?",
-    "¿Quieres Reportar una Incidencia en Guadalajara?",
-    "¿Quieres Reportar una Incidencia en Monterrey?",
-    "¿Quieres Reportar una Incidencia en CDMX?",
+    "¿Quieres reportar una incidencia en tu localidad?",
+    "¿Quieres reportar una incidencia en la Ciudad?",
   ];
   const instructions = msgWelcome[Math.floor(Math.random() * msgWelcome.length)];
   const reply = {
@@ -107,15 +126,23 @@ const sendInformation = (recipientId) => {
 };
 
 const reciveAttachments = (event) => {
+  console.log(JSON.stringify(event, null, "\t"))
+  const recipientId = event.sender.id;
+  const timeStamp = event.timestamp;
+
   const messageAttachments = event.message.attachments;
   let lat = null;
   let long = null;
+
   if (messageAttachments[0].payload.coordinates) {
-   lat = messageAttachments[0].payload.coordinates.lat;
-   long = messageAttachments[0].payload.coordinates.long;
+    lat = messageAttachments[0].payload.coordinates.lat;
+    long = messageAttachments[0].payload.coordinates.long;
   }
   let msgLocation = "latitude es : " + lat + " , longitud es : " + long + "\n";
   console.log(msgLocation);
+
+  const msgs = `¡Hey Gracias! \n\nHemos registrado tu reporte con numero de seguimineto: ${timeStamp}, \n\nGracias por usar ReportaBot 😍 \nUn asesor se pondra en contacto para darte seguimiento.`
+  setTimeout(sendSimpleMsg, 1000, recipientId, msgs)
 };
 
 const receiveMessage = (event) => {
@@ -124,14 +151,15 @@ const receiveMessage = (event) => {
   const quick_reply = event.message.quick_reply
 
   switch (event.message.text) {
+    case 'A':
     case 'Enviar Reporte':
-      userLocation(recipientId)
+      sendReport(recipientId)
       break;
     case 'Información':
       sendInformation(recipientId);
       break;
     default:
-      sendMsgInstructions(recipientId);
+      // sendMsgInstructions(recipientId);
       break;
   };
 };
@@ -157,6 +185,71 @@ const userLocation = (recipientId) => {
   sendToMessenger(reply);
 };
 
+const sendReport = (recipientId) => {
+  sendSimpleMsg(recipientId, globalMessages.reportInfo);
+  setTimeout(typeOfReport, 3000, recipientId);
+};
+
+const typeOfReport = (recipientId) => {
+  const reply = {
+    "recipient": {
+      "id": recipientId
+    },
+    "message": {
+        "attachment": {
+          "type": "template",
+          "payload": {
+          "template_type": "generic",
+            "elements": [{
+            "title": "Luminaria",
+              "subtitle": "Si no funciona o es intermitente el servicio ",
+              "image_url": "http://s3.amazonaws.com/chewiekie/img/luminaria_led.jpg",
+              "buttons": [{
+                "type": "postback",
+                "title": "Reportar Liminaria",
+                "payload": "REPORT_LUMINARY",
+              }],
+            }, {
+              "title": "Animal Muerto",
+              "subtitle": "Reportar un Animal muerto",
+              "image_url": "http://s3.amazonaws.com/chewiekie/img/animal_muerto.jpg",
+              "buttons": [{
+                "type": "postback",
+                "title": "Reportar Animal",
+                "payload": "REPORT_ANIMAL",
+              }],
+            },
+            {
+              "title": "Bache",
+              "subtitle": "Reportar un bache",
+              "image_url": "http://s3.amazonaws.com/chewiekie/img/bache_ciudad.png",
+              "buttons": [{
+                "type": "postback",
+                "title": "Reportar Bache",
+                "payload": "REPORT_BUMP",
+              }],
+            }
+          ]
+          }
+        }
+    }
+  }
+sendToMessenger(reply);
+};
+
+const sendSimpleMsg = (recipientId, msg) => {
+  console.log('mensaje')
+  const messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: msg
+    }
+  };
+  sendToMessenger(messageData);
+}
+
 const sendToMessenger = (messageData) => {
   request({
       uri: 'https://graph.facebook.com/v2.6/me/messages',
@@ -165,6 +258,7 @@ const sendToMessenger = (messageData) => {
       json: messageData
   }, (error, response, data) => {
       if (error) {
+          console.log(error)
           console.log('No es posible enviar el mensaje');
       } else {
           console.log("recurso enviado...");
