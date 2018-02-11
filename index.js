@@ -144,6 +144,8 @@ const sendInformation = (recipientId) => {
 const reciveAttachments = (event) => {
   const recipientId = event.sender.id;
   const timeStamp = event.timestamp;
+  const nowTimeStamp = new Date().getTime();
+  console.log(nowTimeStamp);
   const messageAttachments = event.message.attachments;
   let lat = null;
   let long = null;
@@ -153,8 +155,8 @@ const reciveAttachments = (event) => {
   }
   const data = {
     "userId": recipientId,
-    "numReport": timeStamp,
-    "type": 'luminaria',
+    "numReport": nowTimeStamp,
+    "type": 'luminary',
     "lat": lat, 
     "long": long
   };
@@ -220,16 +222,16 @@ const typeOfReport = (recipientId) => {
           "template_type": "generic",
             "elements": [{
             "title": "Luminaria",
-              "subtitle": "Si no funciona o es intermitente el servicio ",
+              "subtitle": "Si no funciona o es intermitente el servicio, al reportar enviareos un equipo para repararle. ",
               "image_url": "http://s3.amazonaws.com/chewiekie/img/luminaria_led.jpg",
               "buttons": [{
                 "type": "postback",
-                "title": "Reportar Liminaria",
+                "title": "Reportar luminaria",
                 "payload": "REPORT_LUMINARY",
               }],
             }, {
               "title": "Animal Muerto",
-              "subtitle": "Reportar un Animal muerto",
+              "subtitle": "Sabemos la importancia de cuidar la salud, este tipo de reporte es atendido de urgencia.",
               "image_url": "http://s3.amazonaws.com/chewiekie/img/animal_muerto.jpg",
               "buttons": [{
                 "type": "postback",
@@ -239,7 +241,7 @@ const typeOfReport = (recipientId) => {
             },
             {
               "title": "Bache",
-              "subtitle": "Reportar un bache",
+              "subtitle": "El compromiso con la movilidad segura es nuestra prioridad, enviaremos un equipo a taparlo",
               "image_url": "http://s3.amazonaws.com/chewiekie/img/bache_ciudad.png",
               "buttons": [{
                 "type": "postback",
