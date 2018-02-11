@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const admin = require("firebase-admin");
 
 const app = express();
 app.set('port', (process.env.PORT || 5000));
@@ -17,15 +18,30 @@ const globalMessages = {
   reportInfo: 'Gracias por preocuparte por tu ciudad para iniciar su reporte es necesario que nos proporciones el tipo de incidencia:'
 }
 
+const serviceAccount = require("./serviceAccountKey.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://reportabot-gdl.firebaseio.com"
+});
+
+const db = admin.database();
+const ref = db.ref("data");
+
+const saveDataFirebase = (data) => {
+  const { numReport } = data;
+  let usersRef = ref.child("reports");
+  usersRef.child(numReport).set(data);
+}
+
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
 
 app.get('/webhook', function (req, res) {
   if (req.query['hub.verify_token'] === 'reportaBot_says_hello') {
-      res.send(req.query['hub.challenge']);
+    res.send(req.query['hub.challenge']);
   } else {
-      res.send('reportaBot_says_bye');
+    res.send('reportaBot_says_bye');
   }
 });
 
@@ -126,23 +142,25 @@ const sendInformation = (recipientId) => {
 };
 
 const reciveAttachments = (event) => {
-  console.log(JSON.stringify(event, null, "\t"))
   const recipientId = event.sender.id;
   const timeStamp = event.timestamp;
-
   const messageAttachments = event.message.attachments;
   let lat = null;
   let long = null;
-
   if (messageAttachments[0].payload.coordinates) {
     lat = messageAttachments[0].payload.coordinates.lat;
     long = messageAttachments[0].payload.coordinates.long;
   }
-  let msgLocation = "latitude es : " + lat + " , longitud es : " + long + "\n";
-  console.log(msgLocation);
-
+  const data = {
+    "userId": recipientId,
+    "numReport": timeStamp,
+    "type": 'luminaria',
+    "lat": lat, 
+    "long": long
+  };
+  saveDataFirebase(data);
   const msgs = `¡Hey Gracias! \n\nHemos registrado tu reporte con numero de seguimineto: ${timeStamp}, \n\nGracias por usar ReportaBot 😍 \nUn asesor se pondra en contacto para darte seguimiento.`
-  setTimeout(sendSimpleMsg, 1000, recipientId, msgs)
+  setTimeout(sendSimpleMsg, 1000, recipientId, msgs);
 };
 
 const receiveMessage = (event) => {
