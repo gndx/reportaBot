@@ -166,11 +166,6 @@ app.get('/api/getReports', function (req, res) {
   });
 });
 
-const setData = (reportsData) => {
-  const obj = JSON.stringify(reportsData);
-  return obj
-}
-
 app.post('/webhook', function (req, res) {
   const data = req.body;
   if (data.object == 'page') {
@@ -275,12 +270,29 @@ const reciveAttachments = (event) => {
   let lat = null;
   let long = null;
   const type = messageAttachments[0].type;
-  console.log(messageAttachments)
+  console.log(type)
 
   if (messageAttachments[0].payload.coordinates) {
     lat = messageAttachments[0].payload.coordinates.lat;
     long = messageAttachments[0].payload.coordinates.long;
   }
+
+    switch (type) {
+      case 'audio':
+        sendSimpleMsg(senderId, '¿Es una cancion bonita? 🎧')
+        break;
+      case 'video':
+        sendSimpleMsg(senderId, 'un video... 😍 lo siento no se detectar videos ');
+        break;
+      case 'file':
+        sendSimpleMsg(senderId, 'No se leer, lo siento 😭');
+        break
+      case 'image':
+      sendSimpleMsg(senderId, '¡Una foto! Me gustan las fotos 😍 \nAunque a ReportaBot le gustan las fotos aun no tenemos soporte para fotografias');
+      default:
+        break;
+    };
+
   const data = {
     "userId": recipientId,
     "numReport": nowTimeStamp,
