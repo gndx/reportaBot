@@ -279,16 +279,16 @@ const reciveAttachments = (event) => {
 
     switch (type) {
       case 'audio':
-        sendSimpleMsg(senderId, '¿Es una cancion bonita? 🎧')
+        sendSimpleMsg(recipientId, '¿Es una cancion bonita? 🎧')
         break;
       case 'video':
-        sendSimpleMsg(senderId, 'un video... 😍 lo siento no se detectar videos ');
+        sendSimpleMsg(recipientId, 'un video... 😍 lo siento no se detectar videos ');
         break;
       case 'file':
-        sendSimpleMsg(senderId, 'No se leer, lo siento 😭');
+        sendSimpleMsg(recipientId, 'No se leer, lo siento 😭');
         break
       case 'image':
-      sendSimpleMsg(senderId, '¡Una foto! Me gustan las fotos 😍 \nAunque a ReportaBot le gustan las fotos aun no tenemos soporte para fotografias');
+      sendSimpleMsg(recipientId, '¡Una foto! Me gustan las fotos 😍 \nAunque a ReportaBot le gustan las fotos aun no tenemos soporte para fotografias');
       default:
         break;
     };
