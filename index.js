@@ -16,7 +16,8 @@ const env = {
 }
 
 const globalMessages = {
-  reportInfo: 'Gracias por preocuparte por tu ciudad para iniciar su reporte es necesario que nos proporciones el tipo de incidencia:'
+  reportInfo: 'Gracias por preocuparte por tu ciudad para iniciar su reporte es necesario que nos proporciones el tipo de incidencia:',
+  defaultMsg: 'Recuerda soy un Bot y por el momento solo puedo crear Reportes 🤓'
 }
 
 const serviceAccount = require("./serviceAccountKey.json");
@@ -181,7 +182,7 @@ const receiveMessage = (event) => {
       sendInformation(recipientId);
       break;
     default:
-      sendMsgInstructions(recipientId);
+      sendCustomMsg(recipientId);
       break;
   };
 };
@@ -206,6 +207,11 @@ const userLocation = (recipientId) => {
   }
   sendToMessenger(reply);
 };
+
+const sendCustomMsg = (recipientId) => {
+  sendSimpleMsg(recipientId, globalMessages.defaultMsg);
+  setTimeout(sendMsgInstructions, 2000, recipientId);
+}
 
 const sendReport = (recipientId) => {
   sendSimpleMsg(recipientId, globalMessages.reportInfo);
