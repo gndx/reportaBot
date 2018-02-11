@@ -33,7 +33,13 @@ const saveDataFirebase = (data) => {
   const { numReport } = data;
   let usersRef = ref.child(numReport);
   usersRef.set(data);
-}
+};
+
+const getDataFirebase = () => {
+   ref.on("value", snapshot => {
+    return JSON.stringify(snapshot.val())
+   })
+};
 
 app.get('/', function (req, res) {
   res.send('Hello World!')
@@ -48,9 +54,122 @@ app.get('/webhook', function (req, res) {
 });
 
 app.post('/notificationToUser', function(req, res) {
-  console.log(req.body);
   res.sendStatus(200).json({ success: true });
 });
+
+app.get('/api/getReports', function (req, res) {
+  getDataFirebase()
+  res.json({
+    success: true, data: {
+      reports: {
+        '1518338263341':
+          {
+            date: 'February 11th 2018, 8:37:43 am',
+            lat: 20.695667518312,
+            long: -103.3532364581,
+            numReport: 1518338263341,
+            type: 'animal',
+            userId: '2023156141033048'
+          },
+        '1518339288795':
+          {
+            date: 'February 11th 2018, 8:54:48 am',
+            lat: 20.640947402106,
+            long: -103.34402179535,
+            numReport: 1518339288795,
+            type: 'bump',
+            userId: '2023156141033048'
+          },
+        '1518339909821':
+          {
+            date: 'February 11th 2018, 9:05:09 am',
+            lat: 20.697545309507,
+            long: -103.3706510067,
+            numReport: 1518339909821,
+            type: 'animal',
+            userId: '2023156141033048'
+          },
+        '1518340923192':
+          {
+            date: 'February 11th 2018, 9:22:03 am',
+            lat: 20.608129855251,
+            long: -103.38513709833,
+            numReport: 1518340923192,
+            type: 'luminary',
+            userId: '2023156141033048'
+          },
+        '1518342778810':
+          {
+            date: 'February 11th 2018, 9:52:58 am',
+            lat: 20.6744451,
+            long: -103.3982178,
+            numReport: 1518342778810,
+            type: 'bump',
+            userId: '2023156141033048'
+          },
+        '1518342878394':
+          {
+            date: 'February 11th 2018, 9:54:38 am',
+            lat: 20.702310009906,
+            long: -103.3787727356,
+            numReport: 1518342878394,
+            type: 'animal',
+            userId: '2023156141033048'
+          },
+        '1518343019863':
+          {
+            date: 'February 11th 2018, 9:56:59 am',
+            lat: 20.717998266934,
+            long: -103.37056730804,
+            numReport: 1518343019863,
+            type: 'bump',
+            userId: '2023156141033048'
+          },
+        '1518359539551':
+          {
+            date: 'February 11th 2018, 2:32:19 pm',
+            lat: 20.713688442346,
+            long: -103.40903479971,
+            numReport: 1518359539551,
+            type: 'luminary',
+            userId: '2023156141033048'
+          },
+        '1518362610225':
+          {
+            date: 'February 11th 2018, 3:23:30 pm',
+            lat: 20.6621180439,
+            long: -103.37059170593,
+            numReport: 1518362610225,
+            type: 'animal',
+            userId: '2023156141033048'
+          },
+        '1518363102094':
+          {
+            date: 'February 11th 2018, 3:31:42 pm',
+            lat: 20.6752556,
+            long: -103.3930198,
+            numReport: 1518363102094,
+            type: 'animal',
+            userId: '2023156141033048'
+          },
+        '1518363439834':
+          {
+            date: 'February 11th 2018, 3:37:19 pm',
+            lat: 20.662477467822,
+            long: -103.43642031244,
+            numReport: 1518363439834,
+            type: 'animal',
+            userId: '2023156141033048'
+          }
+      }
+    }
+  });
+});
+
+const setData = (reportsData) => {
+  const obj = JSON.stringify(reportsData);
+  return obj
+}
 
 app.post('/webhook', function (req, res) {
   const data = req.body;
@@ -152,10 +271,12 @@ const reciveAttachments = (event) => {
   const recipientId = event.sender.id;
   const timeStamp = event.timestamp;
   const nowTimeStamp = new Date().getTime();
-  console.log(nowTimeStamp);
   const messageAttachments = event.message.attachments;
   let lat = null;
   let long = null;
+  const type = messageAttachments[0].type;
+  console.log(messageAttachments)
+
   if (messageAttachments[0].payload.coordinates) {
     lat = messageAttachments[0].payload.coordinates.lat;
     long = messageAttachments[0].payload.coordinates.long;
