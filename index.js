@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const admin = require("firebase-admin");
+const moment = require('moment');
 
 const app = express();
 app.set('port', (process.env.PORT || 5000));
@@ -156,6 +157,7 @@ const reciveAttachments = (event) => {
   const data = {
     "userId": recipientId,
     "numReport": nowTimeStamp,
+    "date": moment().format('MMMM Do YYYY, h:mm:ss a'),
     "type": 'luminary',
     "lat": lat, 
     "long": long
