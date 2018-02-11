@@ -47,6 +47,10 @@ app.get('/webhook', function (req, res) {
   }
 });
 
+app.post('/notificationToUser', function(req, res) {
+  console.log(req.body);
+});
+
 app.post('/webhook', function (req, res) {
   const data = req.body;
   if (data.object == 'page') {
