@@ -277,32 +277,17 @@ const reciveAttachments = (event) => {
     long = messageAttachments[0].payload.coordinates.long;
   }
 
-    switch (type) {
-      case 'audio':
-        sendSimpleMsg(recipientId, '¿Es una cancion bonita? 🎧')
-        break;
-      case 'video':
-        sendSimpleMsg(recipientId, 'un video... 😍 lo siento no se detectar videos ');
-        break;
-      case 'file':
-        sendSimpleMsg(recipientId, 'No se leer, lo siento 😭');
-        break
-      case 'image':
-      sendSimpleMsg(recipientId, '¡Una foto! Me gustan las fotos 😍 \nAunque a ReportaBot le gustan las fotos aun no tenemos soporte para fotografias');
-      default:
-        const data = {
-          "userId": recipientId,
-          "numReport": nowTimeStamp,
-          "date": moment().format('MMMM Do YYYY, h:mm:ss a'),
-          "type": 'luminary',
-          "lat": lat, 
-          "long": long
-        };
-        saveDataFirebase(data);
-        const msgs = `¡Hey Gracias! \n\nHemos registrado tu reporte con numero de seguimineto: ${timeStamp}, \n\nGracias por usar ReportaBot 😍 \nUn asesor se pondra en contacto para darte seguimiento.`
-        setTimeout(sendSimpleMsg, 1000, recipientId, msgs);
-        break;
-    };
+  const data = {
+    "userId": recipientId,
+    "numReport": nowTimeStamp,
+    "date": moment().format('MMMM Do YYYY, h:mm:ss a'),
+    "type": 'luminary',
+    "lat": lat, 
+    "long": long
+  };
+  saveDataFirebase(data);
+  const msgs = `¡Hey Gracias! \n\nHemos registrado tu reporte con numero de seguimineto: ${timeStamp}, \n\nGracias por usar ReportaBot 😍 \nUn asesor se pondra en contacto para darte seguimiento.`
+  setTimeout(sendSimpleMsg, 1000, recipientId, msgs);
 
 };
 
