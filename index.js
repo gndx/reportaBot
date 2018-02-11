@@ -181,15 +181,15 @@ const receiveMessage = (event) => {
       sendInformation(recipientId);
       break;
     default:
-      // sendMsgInstructions(recipientId);
+      sendMsgInstructions(recipientId);
       break;
   };
 };
 
 const userLocation = (recipientId) => {
   const msgWelcome = [
-    "¿Dime donde te encuentras?",
-    "¿Cual es tu ubicacion?",
+    "¿Puedes proporcionarme la ubicacion del lugar a reportar?",
+    "¿Cual es la ubicacion del lugar a reportar?",
   ];
   const instructions = msgWelcome[Math.floor(Math.random() * msgWelcome.length)];
   const reply = {
