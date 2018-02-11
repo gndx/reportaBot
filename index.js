@@ -29,8 +29,8 @@ const ref = db.ref("data");
 
 const saveDataFirebase = (data) => {
   const { numReport } = data;
-  let usersRef = ref.child("reports");
-  usersRef.child(numReport).set(data);
+  let usersRef = ref.child(numReport);
+  usersRef.set(data);
 }
 
 app.get('/', function (req, res) {
