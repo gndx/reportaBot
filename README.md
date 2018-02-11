@@ -1,5 +1,5 @@
 # reportaBot
-ReportaBot es una plantaforma preparada para ser utilizada en su escuela, comunidad, ciudad o pais para hacer cualquier tipo de reportes por medio de Facebook Messenger interactuando con un BOT y en 3 simples pasos (iniciar conversacion, elegir tipo de reporte, enviar localizacion) para dar la alta de un reporte.
+ReportaBot es una plantaforma preparada para ser utilizada en su escuela, comunidad, ciudad o pais para hacer cualquier tipo de reportes por medio de Facebook Messenger interactuando con un BOT y en 3 simples pasos (iniciar conversacion, elegir tipo de reporte, enviar localizacion) para dar la alta de un reporte. 
 
 Incluye 
 
@@ -25,7 +25,6 @@ Repositorio: https://github.com/gndx/reportaBot
 
 Tecnologias implementadas: NodeJS / Express / Firebase RealTime Database / Facebook Messenger API
 
-
 # FrontEnd: LandingPage
 
 La landing del proyecto esta construida en ReactJs y hospedado en Firebase Hosting y utiliza Firebase RealTime Database.
@@ -35,7 +34,6 @@ Dominio: https://reportabot.tech/
 Repositorio: https://github.com/gndx/reportaBot-React
 
 Tecnologias implementadas: NodeJS / React / Firebase RealTime Database / Google Maps v3 API / Stylus
-
 
 # FrontEnd: Admin Panel
 
