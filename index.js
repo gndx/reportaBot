@@ -49,6 +49,7 @@ app.get('/webhook', function (req, res) {
 
 app.post('/notificationToUser', function(req, res) {
   console.log(req.body);
+  res.sendStatus(200).json({ success: true });
 });
 
 app.post('/webhook', function (req, res) {
